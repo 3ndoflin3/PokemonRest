@@ -115,7 +115,7 @@ public class PokemonController extends HttpServlet {
 			LOG.error("No se ha podido crear el Pokemon" + e.getMessage());
 		}
 		
-		int codigo = ( p.getId()!= 0 )? ("".equals(p.getNombre()) || p.getNombre() == null )? SC_NO_CONTENT : SC_NOT_FOUND : SC_CREATED; 
+		int codigo = ( p.getId()!= 0 )? ("".equals(p.getNombre()) || p.getNombre() == null )? SC_NO_CONTENT : SC_CREATED : SC_NOT_FOUND; 
 		response.setStatus(codigo);
 		
 			try(PrintWriter out = response.getWriter();){

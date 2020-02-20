@@ -158,7 +158,7 @@ public class PokemonDAO implements IDAO <Pokemon>{
 		try{
 			con = ConnectionManager.getConnection();
 			//No comita en la base de datos las consultas hasta que se haga un commit (No guarda automaticamente los cambios)
-			con.setAutoCommit(true);
+			con.setAutoCommit(false);
 			
 			PreparedStatement pst = con.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
 			pst.setString(1, pojo.getNombre());
