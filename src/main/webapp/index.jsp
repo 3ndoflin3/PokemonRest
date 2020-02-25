@@ -14,7 +14,7 @@
 <body>
 	<h1>Documentacion</h1>
 
-<p>Endpoint: <b>${pageContext.request.contextPath }/api/pokemon</b></p>
+<p>Endpoint: <strong>${pageContext.request.contextPath }/api/pokemon</strong></p>
 <!-- Examen
 montar bd 1 maestro detalle ( 1:N )
 log 1 pt

@@ -5,22 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.ipartek.formacion.model.pojo.Habilidad;
-import com.ipartek.formacion.model.pojo.Pokemon;
 
 public class HabilidadesDAO {
 
 	
 	private static HabilidadesDAO INSTANCE;
-	//private ArrayList<Pokemon> registros;
 	private ArrayList<Habilidad> habilidades;
 	//INSERTAR HABILIDAD EN TABLA INTERMEDIA
 	String SQL_GET_ALL = "SELECT id, nombre FROM habilidad";
-	private final static Logger LOG = Logger.getLogger(PokemonDAO.class);
+	private final static Logger LOG = Logger.getLogger(HabilidadesDAO.class);
 
 	
 	private HabilidadesDAO() {
@@ -36,7 +34,7 @@ public class HabilidadesDAO {
 	
 	
 	
-	public ArrayList<Habilidad> getHabilidades() {
+	public List<Habilidad> getHabilidades() {
 		
 		habilidades = new ArrayList<>();
 		
@@ -64,7 +62,6 @@ public class HabilidadesDAO {
 				
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			LOG.error(e.getMessage());
 		}
 		

@@ -3,6 +3,7 @@ package com.ipartek.formacion.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -67,14 +68,20 @@ public class PokemonController extends HttpServlet {
 		String id = request.getPathInfo();
 		
 		ArrayList<Pokemon> pokemons = null;
+		try {
 		
-		if(!"".equals(nombre) && nombre != null) {
-			pokemons =  dao.getByName(nombre);
-		}else if(!"".equals(id) && id != null){	
-			id = id.replaceAll("/", "");
-			pokemons =  dao.getById(Integer.parseInt(id));
-		}else {	
-			pokemons =  dao.getAll();
+			if(!"".equals(nombre) && nombre != null) {
+				pokemons =  dao.getByName(nombre);
+			}else if(!"".equals(id) && id != null){	
+				id = id.replaceAll("/", "");
+					pokemons =  dao.getById(Integer.parseInt(id));
+			}else {	
+				pokemons =  dao.getAll();
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		
 		int codigo = (pokemons.isEmpty()) ? 404 : 200;

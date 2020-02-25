@@ -55,23 +55,25 @@ public class PokemonDAO implements IDAO <Pokemon>{
 	}
 
 	@Override
-	public ArrayList<Pokemon> getById(int id) {
+	public ArrayList<Pokemon> getById(int id) throws SQLException {
 		String sql = "\r\n" + 
 				"SELECT p.id 'id_pokemon', p.nombre 'nombre_pokemon', p.imagen, h.nombre 'nombre_habilidad', h.id 'id_habilidad' FROM pokemon p LEFT JOIN pokemon_has_habilidades ph ON p.id = ph.id_pokemon LEFT JOIN habilidad h  ON ph.id_habilidad = h.id WHERE p.id = ?  ORDER BY p.id DESC LIMIT 500;";
-			
+		ResultSet rs = null;
 				hm = new HashMap<>();
 				try (Connection con = ConnectionManager.getConnection();
 						PreparedStatement pst = con.prepareStatement(sql);
 						){
 
 					pst.setInt(1,id );
-					ResultSet rs = pst.executeQuery();
+					rs = pst.executeQuery();
 					while(rs.next()) {
 						mapper(rs);
 					}
-					rs.close();
 				} catch (Exception e) {
 					LOG.error(e.getMessage());
+				}finally {
+					
+					rs.close();
 				}
 				return new ArrayList<Pokemon> (hm.values());
 
@@ -84,22 +86,28 @@ public class PokemonDAO implements IDAO <Pokemon>{
 			"INNER JOIN habilidad h ON h.id = phh.id_habilidad\r\n" + 
 			"WHERE p.nombre LIKE ? \r\n" + 
 			"ORDER BY p.nombre LIMIT 500;";
-		
+		ResultSet rs = null;
 			hm = new HashMap<>();
 			try (Connection con = ConnectionManager.getConnection();
 					PreparedStatement pst = con.prepareStatement(sql);
 					){
 
 				pst.setString(1,"%" + name + "%");
-				ResultSet rs = pst.executeQuery();
+				rs = pst.executeQuery();
 				
 				while(rs.next()) {
 					mapper(rs);
 				}
 				
-				rs.close();
 			} catch (Exception e) {
 				LOG.error(e.getMessage());
+			}finally {
+				
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					LOG.error("getByName", e);
+				}
 			}
 			return new ArrayList<Pokemon> (hm.values());
 
@@ -114,8 +122,8 @@ public class PokemonDAO implements IDAO <Pokemon>{
 			pst.setInt(1, id);
 			LOG.debug(pst);
 			int affectedRows = pst.executeUpdate();
-			if (affectedRows == 0) {
-				throw new Exception("No existe ning�n pokemon con el id" + id);
+			if (affectedRows == 1) {
+				LOG.info("Se ha borrado con exito el pokemon con id " + id);
 			}
 			
 		}catch (Exception e) {
@@ -155,6 +163,7 @@ public class PokemonDAO implements IDAO <Pokemon>{
 		//Obtenemos las habilidades del pokemon
 		ArrayList <Habilidad> habilidades = (ArrayList<Habilidad>) pojo.getHabilidades();
 		
+		PreparedStatement pstHab = null;
 		try{
 			con = ConnectionManager.getConnection();
 			//No comita en la base de datos las consultas hasta que se haga un commit (No guarda automaticamente los cambios)
@@ -172,7 +181,6 @@ public class PokemonDAO implements IDAO <Pokemon>{
 					pojo.setId(rs.getInt(1));
 					
 					//Preparo el Statement de las habilidades
-					PreparedStatement pstHab = null;
 					//Cogemos las habilidades
 					for (Habilidad h : habilidades) {
 						pstHab = con.prepareStatement(SQL_INSERT_POKEMON_HAS_HABILIDADES);
@@ -185,9 +193,7 @@ public class PokemonDAO implements IDAO <Pokemon>{
 						
 						
 					}
-					pstHab.close();
-					con.commit();
-										
+									
 				}
 				
 			}
@@ -214,7 +220,9 @@ public class PokemonDAO implements IDAO <Pokemon>{
 			
 		}finally {
 			//Cerramos la conexión si no es nula
-			
+			pstHab.close();
+			con.commit();
+				
 			if(con!=null) {
 				con.close();
 			}

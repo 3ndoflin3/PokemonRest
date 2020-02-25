@@ -52,7 +52,7 @@ public class HabilidadesController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		habilidades = dao.getHabilidades();
+		habilidades = (ArrayList<Habilidad>) dao.getHabilidades();
 		
 		int codigo = (habilidades.isEmpty()) ? 404 : 200;
 		

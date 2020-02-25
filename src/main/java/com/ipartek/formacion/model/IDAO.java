@@ -1,6 +1,7 @@
 package com.ipartek.formacion.model;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -20,8 +21,9 @@ public interface IDAO<P> {
 	 * recupera un pojo por su identificador
 	 * @param id identificador
 	 * @return pojo si lo encuentra, si no null
+	 * @throws SQLException 
 	 */
-	ArrayList<Pokemon> getById(int id);
+	ArrayList<Pokemon> getById(int id) throws SQLException;
 	
 	/**
 	 * Elimina

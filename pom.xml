@@ -17,6 +17,10 @@
 		<javax.servlet.api>3.0.1</javax.servlet.api>
 		<javax.servlet.jsp.version>2.2</javax.servlet.jsp.version>
 		<javax.servlet.jstl.version>1.2</javax.servlet.jstl.version>
+		  <sonar.projectKey>3ndoflin3_PokemonRest</sonar.projectKey>
+		  <sonar.organization>3ndoflin3</sonar.organization>
+		  <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		  <sonar.login>c5d6f7ed8748ffe4b2d780c6fdb526dba4f42ef9</sonar.login>
 	</properties>
 
 	<!-- librerias que vamos a usar u otros proyectos maven -->
