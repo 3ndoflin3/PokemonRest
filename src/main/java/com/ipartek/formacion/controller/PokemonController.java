@@ -138,7 +138,9 @@ public class PokemonController extends HttpServlet {
 					out.println(mensaje);
 				}
 				out.flush();
-			}//End IF
+				dao.getAll();
+
+			}//End TRY
 		
 	}//DoPost END
 
@@ -181,6 +183,7 @@ public class PokemonController extends HttpServlet {
 					out.println(mensaje);
 				}
 				out.flush();
+				dao.getAll();
 			}
 	}
 
@@ -193,7 +196,7 @@ public class PokemonController extends HttpServlet {
 		id = id.replace("/", "");
 		try {
 			
-		
+			
 			dao.delete(Integer.parseInt(id));
 		} catch (Exception e) {
 			LOG.error("No se ha podido borrar el Pokemon " + e.getMessage());
@@ -215,6 +218,8 @@ public class PokemonController extends HttpServlet {
 					out.println(mensaje);
 				}
 				out.flush();
+				dao.getAll();
+
 			}
 	}
 

@@ -252,7 +252,6 @@ public class PokemonDAO implements IDAO <Pokemon>{
 				hm.put(idPokemon, p);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			LOG.error(e.getMessage());
 		}
 
