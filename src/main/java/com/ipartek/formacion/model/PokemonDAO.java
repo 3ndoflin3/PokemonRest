@@ -21,6 +21,7 @@ public class PokemonDAO implements IDAO <Pokemon>{
 	private HashMap <Integer, Pokemon> hm;
 	//INSERTAR HABILIDAD EN TABLA INTERMEDIA
 	private static final String SQL_INSERT_POKEMON_HAS_HABILIDADES = "INSERT INTO `pokedex`.`pokemon_has_habilidades` (`id_pokemon`, `id_habilidad`) VALUES (?, ?);";
+	private static final String SQL_DELETE_POKEMON_HAS_HABILIDADES = "DELETE FROM `pokemon_has_habilidades` WHERE  `id_pokemon`=? ";
 	private static final String SQL_CREATE = "INSERT INTO `pokemon` (`nombre`,`imagen`) VALUES (?,?)";
 	private final static Logger LOG = Logger.getLogger(PokemonDAO.class);
 
@@ -134,26 +135,78 @@ public class PokemonDAO implements IDAO <Pokemon>{
 	}
 	@Override
 	public Pokemon update(int id, Pokemon pojo) throws Exception {
-		String SQL_GET_UPDATE = "UPDATE pokemon SET nombre = ? WHERE id = ?;";
-		
-		try (Connection con = ConnectionManager.getConnection();
-				PreparedStatement pst = con.prepareStatement(SQL_GET_UPDATE)){
-
-		
-			pst.setString(1, pojo.getNombre());
-			pst.setInt(2, id);
-			
-			LOG.debug(pst);
-
-			int affectedRows = pst.executeUpdate(); // lanza una excepcion si nombre repetido
-			if (affectedRows >= 1) {
-				pojo.setId(id);
-			} else {
-				throw new Exception("No se encontro registro para id=" + id);
-			}
-
-		}
-		return pojo;
+		String SQL_GET_UPDATE = "UPDATE pokemon SET nombre = ?, imagen = ? WHERE id = ?;";
+		Connection con = null;
+		//Obtenemos las habilidades del pokemon 
+				ArrayList<Habilidad> habilidades = (ArrayList<Habilidad>) pojo.getHabilidades();
+				
+				try{
+					con = ConnectionManager.getConnection();
+					
+					//No realizamos la transaccion hasta que se haga el commit
+					con.setAutoCommit(false);
+					
+					//Actualizamos los datos del pokemon 
+				   try( PreparedStatement pst = con.prepareStatement(SQL_GET_UPDATE)){
+					   pst.setString(1, pojo.getNombre());
+						pst.setString(2, pojo.getImagen());
+						pst.setInt(3, pojo.getId());
+						
+						LOG.debug(pst);
+						
+						int filasAfectadas = pst.executeUpdate();
+						
+						//En caso de que se realice correctamente la update, continuamos con las demás transacciones.
+						if (filasAfectadas == 1) {
+							 try(PreparedStatement pstEliminarHabilidades = con.prepareStatement(SQL_DELETE_POKEMON_HAS_HABILIDADES)){
+									//Recorremos las habilidades para eliminarlas de la tabla pokemon_has_habilidades
+									pstEliminarHabilidades.setInt(1, pojo.getId());
+									
+									int affectedRows = pstEliminarHabilidades.executeUpdate();
+													
+									if(affectedRows>0) {
+										//Ahora tenemos que insertar en la tabla por cada habilidad
+										try(PreparedStatement pstAddHabilidades = con.prepareStatement(SQL_INSERT_POKEMON_HAS_HABILIDADES)){
+											
+												for (Habilidad habilidad : habilidades) {
+												pstAddHabilidades.setInt(1, pojo.getId());
+												pstAddHabilidades.setInt(2, habilidad.getId());
+												LOG.debug(pstAddHabilidades);
+												pstAddHabilidades.executeUpdate();
+											}
+										}
+									
+									}//Fin if affectedrows>0
+									
+									con.commit();
+							 };
+							
+						
+						}//Acaba el IF de filas afectadas
+						
+				   };
+								
+				}catch (MySQLIntegrityConstraintViolationException e) {
+					if(con!=null) {
+						con.rollback();
+					}
+					
+					if(e.getMessage().contains("Duplicate")) {
+						throw new MySQLIntegrityConstraintViolationException("El nombre ya existe");
+					}else {
+						throw new MySQLIntegrityConstraintViolationException("Has introducido alguna habilidad que no existe.");
+					}
+				}catch (Exception e) {
+					throw new Exception(e);
+				}finally {
+					
+					//Cerramos la conexión si no es nula
+					
+					if(con!=null) {
+						con.close();
+					}
+				}
+				return pojo;
 	}
 
 	@Override

@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `habilidad` (
   `nombre` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 ;
 
 -- Volcando datos para la tabla pokedex.habilidad: ~7 rows (aproximadamente)
 DELETE FROM `habilidad`;
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `pokemon` (
   `imagen` varchar(800) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=61 ;
 
 -- Volcando datos para la tabla pokedex.pokemon: ~10 rows (aproximadamente)
 DELETE FROM `pokemon`;
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `pokemon_has_habilidades` (
   KEY `fk_pokemon` (`id_pokemon`),
   CONSTRAINT `fk_habilidad` FOREIGN KEY (`id_habilidad`) REFERENCES `habilidad` (`id`),
   CONSTRAINT `fk_pokemon` FOREIGN KEY (`id_pokemon`) REFERENCES `pokemon` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 ;
 
 -- Volcando datos para la tabla pokedex.pokemon_has_habilidades: ~10 rows (aproximadamente)
 DELETE FROM `pokemon_has_habilidades`;
