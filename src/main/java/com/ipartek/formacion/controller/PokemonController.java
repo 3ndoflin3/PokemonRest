@@ -116,7 +116,6 @@ public class PokemonController extends HttpServlet {
 
 		
 		try {
-
 			p = dao.create(p);
 		} catch (Exception e) {
 			LOG.error("No se ha podido crear el Pokemon" + e.getMessage());
@@ -202,7 +201,7 @@ public class PokemonController extends HttpServlet {
 			LOG.error("No se ha podido borrar el Pokemon " + e.getMessage());
 		}
 		
-		int codigo = ( Integer.parseInt(id) != 0 )? SC_NOT_FOUND : SC_OK; 
+		int codigo = ( Integer.parseInt(id) != 0 )? SC_OK : SC_NOT_FOUND;
 		response.setStatus(codigo);
 		
 			try(PrintWriter out = response.getWriter();){
